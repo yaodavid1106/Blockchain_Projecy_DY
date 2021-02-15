@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/yaodavid1106/Blockchain_Projecy_DY/blockchain"
 )
@@ -16,6 +17,10 @@ func main() {
 		fmt.Printf("Time : %x\n", block.Timestamp)
 		fmt.Printf("Data : %x\n", block.Data)
 		fmt.Printf("Hash : %x\n", block.Hash)
+
+		pow := blockchain.NewProof(block)
+		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
+
 		fmt.Println()
 	}
 }

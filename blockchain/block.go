@@ -1,8 +1,6 @@
 package blockchain
 
 import (
-	"bytes"
-	"crypto/sha256"
 	"time"
 )
 
@@ -10,6 +8,7 @@ type Block struct {
 	PreviousBlockHash []byte
 	Timestamp         []byte
 	Data              []byte
+	Nonce             int
 	Hash              []byte
 }
 
@@ -17,15 +16,12 @@ type BlockChain struct {
 	Blocks []*Block
 }
 
-func (b *Block) calculateHash() {
-	info := bytes.Join([][]byte{b.Data, b.PreviousBlockHash}, []byte{})
-	hash := sha256.Sum256(info)
-	b.Hash = hash[:]
-}
-
 func CreateBlock(data string, PreviousBlockHash []byte) *Block {
-	block := &Block{PreviousBlockHash, []byte(time.Now().String()), []byte(data), []byte{}}
-	block.calculateHash()
+	block := &Block{PreviousBlockHash, []byte(time.Now().String()), []byte(data), 0, []byte{}}
+	pow := NewProof(block)
+	nonce, hash := pow.Run()
+	block.Hash = hash[:]
+	block.Nonce = nonce
 	return block
 }
 
