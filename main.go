@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 
-	"github.com/yaodavid1106/Blockchain_Projecy_DY/Blockchain"
+	"github.com/yaodavid1106/Blockchain_Projecy_DY/blockchain"
 )
 
 func main() {
-	chain := Blockchain.InitBlockChain()
+	chain := blockchain.InitBlockChain()
 
 	chain.AddBlock("This is the second block")
 
