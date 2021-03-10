@@ -49,13 +49,10 @@ func InitBlockChain() *BlockChain {
 			return err
 		}
 
-		Handle(err)
-		blockchain := BlockChain{lastHash, db}
-		return &blockchain
-
 	})
-
-	return &BlockChain{[]*Block{Genesis()}}
+	Handle(err)
+	blockchain := BlockChain{lastHash, db}
+	return &blockchain
 }
 
 func (chain *BlockChain) AddBlock(data string) {
