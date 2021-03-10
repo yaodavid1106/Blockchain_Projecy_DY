@@ -10,6 +10,7 @@ import (
 	"math/big"
 )
 
+//The first 20 (Difficulty) bit (5 digits) need to be 0
 const Difficulty = 20
 
 type ProofOfWork struct {
@@ -18,15 +19,15 @@ type ProofOfWork struct {
 }
 
 func NewProof(b *Block) *ProofOfWork {
+	//Create a big integer with value 1 then left shift it by the difficult
 	target := big.NewInt(1)
 	target.Lsh(target, uint(256-Difficulty))
-
 	pow := &ProofOfWork{b, target}
-
 	return pow
 }
 
 func (pow *ProofOfWork) InitData(nonce int) []byte {
+	//Joint all data
 	data := bytes.Join(
 		[][]byte{
 			pow.Block.PreviousBlockHash,
@@ -41,6 +42,7 @@ func (pow *ProofOfWork) InitData(nonce int) []byte {
 }
 
 func (pow *ProofOfWork) Run() (int, []byte) {
+	//Main function in PoW
 	var intHash big.Int
 	var hash [32]byte
 
@@ -53,6 +55,9 @@ func (pow *ProofOfWork) Run() (int, []byte) {
 		fmt.Printf("\r%x", hash)
 		intHash.SetBytes(hash[:])
 
+		//-1 if x <  y
+		//0 if x == y (incl. -0 == 0, -Inf == -Inf, and +Inf == +Inf)
+		//+1 if x >  y
 		if intHash.Cmp(pow.Target) == -1 {
 			break
 		} else {
@@ -76,6 +81,8 @@ func (pow *ProofOfWork) Validate() bool {
 }
 
 func ToHex(num int64) []byte {
+	//Convert int64 to []byte
+	//binary.BigEndian is a way of storing multibyte data-types
 	buff := new(bytes.Buffer)
 	err := binary.Write(buff, binary.BigEndian, num)
 	if err != nil {
