@@ -13,7 +13,6 @@ const (
 type BlockChain struct {
 	LastHash []byte
 	Database *badger.DB
-	//Blocks []*Block
 }
 
 type BlockChainIterator struct {
@@ -31,7 +30,7 @@ func InitBlockChain() *BlockChain {
 	db, err := badger.Open(opts)
 	Handle(err)
 
-	err := db.Update(func(txn *badger.Txn) error {
+	err = db.Update(func(txn *badger.Txn) error {
 		if _, err := txn.Get([]byte("lh")); err == badger.ErrKeyNotFound {
 			fmt.Println("No exisiting blockchain found")
 			genesis := Genesis()
@@ -87,6 +86,7 @@ func (iter *BlockChainIterator) Next() *Block {
 	var block *Block
 
 	err := iter.Database.View(func(txn *badger.Txn) error {
+		item, err := txn.Get(iter.CurrentHash)
 		Handle(err)
 		encodedBlock, err := item.Value()
 		block = Deserialize(encodedBlock)
@@ -95,7 +95,7 @@ func (iter *BlockChainIterator) Next() *Block {
 	})
 	Handle(err)
 
-	item.CurrentHash = block.PreviousBlockHash
+	iter.CurrentHash = block.PreviousBlockHash
 
 	return block
 }
