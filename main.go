@@ -60,7 +60,7 @@ func (cli *CommandLine) createBlockChain(address string) {
 
 func (cli *CommandLine) getBalance(address string) {
 	chain := blockchain.ContinueBlockChain(address)
-	chain.Database.Close()
+	defer chain.Database.Close()
 
 	balance := 0
 	UTXOs := chain.FindUTXO(address)
@@ -74,7 +74,7 @@ func (cli *CommandLine) getBalance(address string) {
 
 func (cli *CommandLine) send(from, to string, amount int) {
 	chain := blockchain.ContinueBlockChain(from)
-	chain.Database.Close()
+	defer chain.Database.Close()
 
 	tx := blockchain.NewTransaction(from, to, amount, chain)
 	chain.AddBlock([]*blockchain.Transaction{tx})

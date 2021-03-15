@@ -150,6 +150,7 @@ func (chain *BlockChain) FindUnspentTransactions(address string) []Transaction {
 	iter := chain.Iterator()
 
 	for {
+
 		block := iter.Next()
 
 		for _, tx := range block.Transactions {
@@ -183,7 +184,6 @@ func (chain *BlockChain) FindUnspentTransactions(address string) []Transaction {
 			break
 		}
 	}
-
 	return unspentTxs
 }
 
