@@ -10,13 +10,13 @@ import (
 type Block struct {
 	PreviousBlockHash []byte
 	Timestamp         []byte
-	Data              []byte
+	Transactions      []*Transaction
 	Nonce             int
 	Hash              []byte
 }
 
-func CreateBlock(data string, PreviousBlockHash []byte) *Block {
-	block := &Block{PreviousBlockHash, []byte(time.Now().String()), []byte(data), 0, []byte{}}
+func CreateBlock(txs []*Transaction, PreviousBlockHash []byte) *Block {
+	block := &Block{PreviousBlockHash, []byte(time.Now().String()), txs, 0, []byte{}}
 	pow := NewProof(block)
 	nonce, hash := pow.Run()
 	block.Hash = hash[:]
@@ -24,8 +24,21 @@ func CreateBlock(data string, PreviousBlockHash []byte) *Block {
 	return block
 }
 
-func Genesis() *Block {
-	return CreateBlock("This is Genesis", []byte{})
+func Genesis(coinbase *Transaction) *Block {
+	return CreateBlock([]*Transaction{coinbase}, []byte{})
+}
+
+
+func (b *Block) HashTransactions() []byte{
+	var txHashes [][]byte
+	var txHash [32]byte
+
+	for _,tx := range b.Transactions{
+		txHashes = append(txHashes, tx.ID)
+	}
+	txHash = sha256.Sum256(bytes.Join(txHashes,[]byte{}))
+	
+	return txHash[:]
 }
 
 func (b *Block) Serialize() []byte {
