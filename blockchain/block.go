@@ -28,16 +28,16 @@ func CreateBlock(txs []*Transaction, PreviousBlockHash []byte) *Block {
 func Genesis(coinbase *Transaction) *Block {
 	return CreateBlock([]*Transaction{coinbase}, []byte{})
 }
- 
-func (b *Block) HashTransactions() []byte{
+
+func (b *Block) HashTransactions() []byte {
 	var txHashes [][]byte
 	var txHash [32]byte
-  
-	for _,tx := range b.Transactions{
+
+	for _, tx := range b.Transactions {
 		txHashes = append(txHashes, tx.ID)
-	} 
-txHash = sha256.Sum256(bytes.Join(txHashes,[]byte{}))
-	
+	}
+	txHash = sha256.Sum256(bytes.Join(txHashes, []byte{}))
+
 	return txHash[:]
 }
 
